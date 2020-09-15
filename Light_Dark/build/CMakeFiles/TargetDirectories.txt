@@ -1,0 +1,3 @@
+C:/Users/Nargiza/source/repos/Light_Dark/Light_Dark/build/CMakeFiles/Light_Dark.dir
+C:/Users/Nargiza/source/repos/Light_Dark/Light_Dark/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Nargiza/source/repos/Light_Dark/Light_Dark/build/CMakeFiles/ZERO_CHECK.dir

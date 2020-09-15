@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 2.8)
+project(Light_Dark)
+set(OpenCV_DIR C:/opencv/build)
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+add_executable( Light_Dark Light_Dark.cpp)
+target_link_libraries( Light_Dark ${OpenCV_LIBS} )
