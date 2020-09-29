@@ -7,7 +7,7 @@
 using namespace cv;
 using namespace std;
 
-int findmax__index(int* arr, int sizeof_arr) {
+int findmax__index(int* arr, int sizeof_arr) {  //finds the index of the maximum element
     int max = arr[0];
     int index_max = 0;
     for (int i = 0; i < sizeof_arr; i++) {
@@ -19,7 +19,7 @@ int findmax__index(int* arr, int sizeof_arr) {
     return index_max;
 }
 
-void gist_create(Mat img, int* gist) {
+void gist_create(Mat img, int* gist) {        //writes the brightness histogram to the given array
     double s = 0;
     int index = 0;
     for (int i = 0; i < img.rows; i++) {
@@ -38,7 +38,7 @@ void gist_create(Mat img, int* gist) {
 int main()
 {
 
-    int gist[256];
+    int gist[256]; //array for the future histogram
     
     for (int k = 0; k < 256; k++) {
         gist[k] = 0;
@@ -54,12 +54,12 @@ int main()
 
     gist_create(img, gist);
 
-    int index = findmax__index(gist, 256);
+    int index = findmax__index(gist, 256);  //finding the peak
     int i = index, j = index;
     int max = gist[index];
-    int sum_right = 0, sum_left = 0;
+    int sum_right = 0, sum_left = 0;        
 
-    while ((gist[i] >= max / 2) && (i < 256)) {
+    while ((gist[i] >= max / 2) && (i < 256)) { 
         i = i + 1;
     }
 
