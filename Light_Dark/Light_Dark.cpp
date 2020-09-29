@@ -3,84 +3,85 @@
 #include <opencv2/imgproc.hpp>
 #include <iostream>
 
+
 using namespace cv;
 using namespace std;
 
+int findmax__index(int* arr, int sizeof_arr) {
+    int max = arr[0];
+    int index_max = 0;
+    for (int i = 0; i < sizeof_arr; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+            index_max = i;
+        }      
+    }
+    return index_max;
+}
+
+void gist_create(Mat img, int* gist) {
+    double s = 0;
+    int index = 0;
+    for (int i = 0; i < img.rows; i++) {
+        for (int j = 0; j < img.cols; j++) {
+            s = 0;
+            for (int k = 0; k < 3; k++) {
+                s = s + (double)img.at<Vec3b>(i, j)[k];
+            }
+            index = (int)(s / 3);
+            gist[index] = gist[index] + 1;
+        }
+    }
+}
+
+
 int main()
 {
-    double s[3]; //summa B, G, R po odnoy stroke
-    double t[3]; //summa B, G. R po vsemu izobrajeniu
-    int flag = 0; //schotchik "ne sylno otlichayuschiksya" pikseley v stroke
-    bool flag_1 = false; //nalichie stroki, sostoyaschey iz fona
-    Mat img = imread("test4.jpg");
 
-    for (int k = 0; k < 3; k++) {
-        t[k] = 0;
+    int gist[256];
+    
+    for (int k = 0; k < 256; k++) {
+        gist[k] = 0;
+    }
+    
+    Mat img = imread("../test1.jpg");
+    
+    if (img.empty())
+    {
+        cout << "ERROR" << endl;
+        return -1;
     }
 
-    for (int i = 0; (i < img.rows) && (flag != img.cols - 1); i++) {
-        flag = 0;
+    gist_create(img, gist);
 
-        for (int k = 0; k < 3; k++) {
-            s[k] = 0;
-        }
+    int index = findmax__index(gist, 256);
+    int i = index, j = index;
+    int max = gist[index];
+    int sum_right = 0, sum_left = 0;
 
-        for (int j = 0; (j < img.cols - 1) && (flag != img.cols - 1); j++) {
-
-
-            if (((double)img.at<Vec3b>(i, j)[0] < (double)img.at<Vec3b>(i, j + 1)[0] + 50) && //uslovie togo, chto v stroke net pikseley teksta
-                ((double)img.at<Vec3b>(i, j)[1] < (double)img.at<Vec3b>(i, j + 1)[1] + 50) &&
-                ((double)img.at<Vec3b>(i, j)[2] < (double)img.at<Vec3b>(i, j + 1)[2] + 50)) {
-                flag = flag + 1;
-                for (int k = 0; k < 3; k++) {
-
-                    s[k] = s[k] + (double)img.at<Vec3b>(i, j)[k];
-
-                }
-            }
-            else {
-
-                flag = 0;
-                break;
-            }
-        }
-    }
-    if (flag == 0) {
-        for (int i = 0; (i < img.rows); i++) {
-            for (int j = 0; j < img.cols; j++) {
-                for (int k = 0; k < 3; k++) {
-
-                    t[k] = t[k] + (double)img.at<Vec3b>(i, j)[k];
-
-                }
-            }
-        }
-        for (int k = 0; k < 3; k++) {
-            if (t[k] / (img.cols * img.rows) > 127.5) {
-                cout << "Light background" << endl;
-                flag_1 = true;
-                break;
-            }
-
-        }
-
-    }
-    else {
-        for (int k = 0; k < 3; k++) {
-            if (s[k] / (img.cols - 1) > 127.5) {
-                cout << "Light background" << endl;
-                flag_1 = true;
-                break;
-            }
-        }
+    while ((gist[i] >= max / 2) && (i < 256)) {
+        i = i + 1;
     }
 
-    if (!flag_1) {
+    while ((gist[j] >= max / 2) && (j >= 0)) {
+        j = j - 1;
+    }
+
+    for (int k = (2 * j - index); k < 256; k++)
+        sum_right = sum_right + gist[k];
+
+    for (int k = (2 * i - index); k >= 0; k--)
+        sum_left = sum_left + gist[k];
+
+    if (sum_right > sum_left)
         cout << "Dark background" << endl;
-    }
-
+    else
+        cout << "Light background" << endl;
+    
+   
     imshow("Display Window", img);
     waitKey(0);
+    
     return 0;
 }
 
